@@ -84,7 +84,6 @@ jobs:
               \"prerelease\": true
             }"
 
-          git push --follow-tags
           # Commit and push the updated package.json
           git config user.name "urmasmuld"
           git config user.email "urmas.muldmaa@gmail.com"
@@ -93,4 +92,3 @@ jobs:
 
           
 
-          
