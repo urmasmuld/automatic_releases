@@ -56,13 +56,13 @@ jobs:
           elif [ "$VERSION_BUMP" == "major" ]; then
             npm --no-git-tag-version version major
           fi
-
+      
           # Use "0.0.1" as the default version if no tags were found
-          TAG=$(git describe --abbrev=0 --tags HEAD || echo "$(node -p "require('./package.json').version")")
-
+          TAG=$(git describe --abbrev=0 --tags HEAD || echo "0.0.1")
+      
           TITLE="Release $TAG"
           BODY="Release notes for version $TAG"
-
+      
           # Create the release
           response=$(curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
             -H "Authorization: token $GITHUB_TOKEN" \
@@ -73,14 +73,19 @@ jobs:
               \"draft\": false,
               \"prerelease\": false
             }")
-
+      
           # Extract the release ID from the API response
           RELEASE_ID=$(echo "$response" | jq -r '.id')
-
+      
           # Mark the release as a prerelease
           curl -X PATCH "https://api.github.com/repos/${{ github.repository }}/releases/${RELEASE_ID}" \
             -H "Authorization: token $GITHUB_TOKEN" \
             -d "{
               \"prerelease\": true
             }"
+      
+          # Update package.json with the new version
+          npm version --no-git-tag-version $TAG
+      
           git push --follow-tags
+      
