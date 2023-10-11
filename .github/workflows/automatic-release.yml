@@ -41,6 +41,9 @@ jobs:
           fi
         shell: bash
 
+      - name: Fetch Tags
+        run: git fetch --tags
+
       - name: Bump Version and Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -80,8 +83,5 @@ jobs:
             -d "{
               \"prerelease\": true
             }"
-
-          npm --no-git-tag-version version $TAG
-
-          npm install
-          
+            
+          git push --follow-tags
