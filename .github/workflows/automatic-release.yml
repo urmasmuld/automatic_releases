@@ -86,5 +86,5 @@ jobs:
 
           npm --no-git-tag-version version $TAG
 
-          git commit -am "Update package.json version to $TAG"
-          git push
+          npm install
+          
