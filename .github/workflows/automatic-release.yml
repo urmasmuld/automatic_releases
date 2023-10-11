@@ -84,9 +84,13 @@ jobs:
               \"prerelease\": true
             }"
 
-          git push --follow-tags
-          # Commit and push the updated package.json
-          git config user.name "urmasmuld"
-          git config user.email "urmas.muldmaa@gmail.com"
-          git commit -am "Bump version to $TAG"
-          git push --follow-tags
+          # Check if package.json has been modified
+          if [ -n "$(git diff --name-only package.json)" ]; then
+            # Commit and push the updated package.json
+            git config user.name "urmasmuld"
+            git config user.email "urmas.muldmaa@gmail.com"
+            git commit -am "Bump version to $TAG"
+            git push --follow-tags
+          fi
+
+          
