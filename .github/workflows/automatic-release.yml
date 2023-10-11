@@ -57,8 +57,8 @@ jobs:
             npm --no-git-tag-version version major
           fi
       
-          # Use "0.0.1" as the default version if no tags were found
-          TAG=$(git describe --abbrev=0 --tags HEAD || echo "0.0.1")
+          # Use package.json "version" as the default version if no tags were found
+          TAG=$(git describe --abbrev=0 --tags HEAD || echo "$(node -p "require('./package.json').version")")
       
           TITLE="Release $TAG"
           BODY="Release notes for version $TAG"
