@@ -58,10 +58,10 @@ jobs:
           fi
 
           # Use "0.0.1" as the default version if no tags were found
-          TAG=$(git describe --abbrev=0 --tags --always HEAD || echo "$(node -p "require('./package.json').version")")
+          TAG=$(git describe --abbrev=0 --tags HEAD || echo "$(node -p "require('./package.json').version")")
 
           TITLE="Release $TAG"
-          BODY="$COMMIT_MESSAGE"
+          BODY="Release notes for version $TAG"
 
           # Create the release
           response=$(curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
@@ -71,7 +71,7 @@ jobs:
               \"name\": \"${TITLE}\",
               \"body\": \"${BODY}\",
               \"draft\": false,
-              \"prerelease\": true
+              \"prerelease\": false
             }")
 
           # Extract the release ID from the API response
@@ -90,5 +90,7 @@ jobs:
           git config user.email "urmas.muldmaa@gmail.com"
           git commit -am "Bump version to $TAG"
           git push --follow-tags
+
+          
 
           
