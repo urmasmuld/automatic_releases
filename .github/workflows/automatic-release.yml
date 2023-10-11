@@ -83,7 +83,8 @@ jobs:
             -d "{
               \"prerelease\": true
             }"
-            
-          npm version --no-git-tag-version $TAG
 
-          git push --follow-tags
+          npm --no-git-tag-version version $TAG
+
+          git commit -am "Update package.json version to $TAG"
+          git push
