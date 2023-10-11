@@ -41,9 +41,6 @@ jobs:
           fi
         shell: bash
 
-      - name: Fetch Tags
-        run: git fetch --tags
-
       - name: Bump Version and Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
