@@ -44,7 +44,8 @@ jobs:
       - name: Fetch Tags
         run: git fetch --tags
 
-      - name: Bump Version and Create Release
+      - name: Bump Version
+        id: bumpver
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -63,12 +64,23 @@ jobs:
           TITLE="Release $TAG"
           BODY="$COMMIT_MESSAGE"
 
+      - name: Prerelease
+        id: prerelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG=$(echo ${{ steps.bumpver.outputs.tag }})
           if [[ $TAG == "0."* ]]; then
             echo "::set-output name=prerel::true"
           else
             echo "::set-output name=prerel::false"
           fi
 
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PREREL=$(echo ${{ steps.prerelease.outputs.prerel }})
           # Create the release
           response=$(curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
             -H "Authorization: token $GITHUB_TOKEN" \
