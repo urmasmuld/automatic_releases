@@ -71,7 +71,7 @@ jobs:
               \"name\": \"${TITLE}\",
               \"body\": \"${BODY}\",
               \"draft\": false,
-              \"prerelease\": false
+              \"prerelease\": true
             }")
 
           # Extract the release ID from the API response
