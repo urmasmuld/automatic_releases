@@ -18,6 +18,11 @@ jobs:
         with:
           node-version: 18
 
+      - name: Get version
+        id: package_version
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
       - name: Install dependencies
         run: npm install
 
@@ -66,7 +71,7 @@ jobs:
               \"name\": \"${TITLE}\",
               \"body\": \"${BODY}\",
               \"draft\": false,
-              \"prerelease\": true
+              \"prerelease\": false
             }")
 
           # Extract the release ID from the API response
@@ -79,9 +84,11 @@ jobs:
               \"prerelease\": true
             }"
 
+          git push --follow-tags
           # Commit and push the updated package.json
           git config user.name "urmasmuld"
           git config user.email "urmas.muldmaa@gmail.com"
           git commit -am "Bump version to $TAG"
+          git push --follow-tags
 
           
