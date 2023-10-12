@@ -74,16 +74,6 @@ jobs:
               \"prerelease\": false
             }")
 
-          # Extract the release ID from the API response
-          RELEASE_ID=$(echo "$response" | jq -r '.id')
-
-          # Mark the release as a prerelease
-          curl -X PATCH "https://api.github.com/repos/${{ github.repository }}/releases/${RELEASE_ID}" \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -d "{
-              \"prerelease\": true
-            }"
-
           git push --follow-tags
           # Commit and push the updated package.json
           git config user.name "urmasmuld"
