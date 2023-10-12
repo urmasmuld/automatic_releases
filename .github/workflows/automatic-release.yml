@@ -90,5 +90,3 @@ jobs:
           git config user.email "urmas.muldmaa@gmail.com"
           git commit -am "Bump version to $TAG"
           git push --follow-tags
-
-          
