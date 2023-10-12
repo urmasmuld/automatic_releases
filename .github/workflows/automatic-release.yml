@@ -58,7 +58,7 @@ jobs:
           fi
 
           # Use "0.0.1" as the default version if no tags were found
-          TAG=$(git describe --abbrev=0 --tags HEAD || echo "$(node -p "require('./package.json').version")")
+          TAG=$(git describe --abbrev=0 --tags --always HEAD || echo "$(node -p "require('./package.json').version")")
 
           TITLE="Release $TAG"
           BODY="$COMMIT_MESSAGE"
@@ -74,7 +74,6 @@ jobs:
               \"prerelease\": false
             }")
 
-          git push --follow-tags
           # Commit and push the updated package.json
           git config user.name "urmasmuld"
           git config user.email "urmas.muldmaa@gmail.com"
