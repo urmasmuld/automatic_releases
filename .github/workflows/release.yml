@@ -25,14 +25,12 @@ jobs:
         id: version
         run: |
           COMMIT_MESSAGE=$(git log -1 --pretty=format:%s)
-          if [[ $COMMIT_MESSAGE == "feat:"* ]]; then
-            echo "::set-output name=version-bump::minor"
-          elif [[ $COMMIT_MESSAGE == "fix:"* ]]; then
+          if [[ $COMMIT_MESSAGE == "Patch:"* ]]; then
             echo "::set-output name=version-bump::patch"
-          elif [[ $COMMIT_MESSAGE == "rel:"* ]]; then
+          elif [[ $COMMIT_MESSAGE == "Minor:"* ]]; then
+            echo "::set-output name=version-bump::minor"
+          elif [[ $COMMIT_MESSAGE == "Major:"* ]]; then
             echo "::set-output name=version-bump::major"
-          else
-            echo "::set-output name=version-bump::none"
           fi
         shell: bash
 
@@ -50,11 +48,12 @@ jobs:
             npm --no-git-tag-version version minor
           elif [ "$VERSION_BUMP" == "major" ]; then
             npm --no-git-tag-version version major
+          # If no major,minor or patch in commit message, then consider it to be patch
           else
             npm --no-git-tag-version version patch
           fi
 
-          # Use "0.0.1" as the default version if no tags were found
+          # Use version from "package.json" as the default version if no tags were found
           TAG=$(git describe --abbrev=0 --tags HEAD || echo "$(node -p "require('./package.json').version")")
 
           # Commit and push the updated package.json
