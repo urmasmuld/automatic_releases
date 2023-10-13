@@ -44,12 +44,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION_BUMP=$(echo ${{ steps.version.outputs.version-bump }})
-          if [ "$VERSION_BUMP" == "minor" ]; then
-            npm --no-git-tag-version version minor
-          elif [ "$VERSION_BUMP" == "patch" ]; then
+          if [ "$VERSION_BUMP" == "patch" ]; then
             npm --no-git-tag-version version patch
+          elif [ "$VERSION_BUMP" == "minor" ]; then
+            npm --no-git-tag-version version minor
           elif [ "$VERSION_BUMP" == "major" ]; then
             npm --no-git-tag-version version major
+          else
+            npm --no-git-tag-version version patch
           fi
 
           # Use "0.0.1" as the default version if no tags were found
