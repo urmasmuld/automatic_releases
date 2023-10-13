@@ -67,6 +67,9 @@ jobs:
           git tag -a -m "Release $TAG" "$TAG"
           git push --follow-tags
 
+          # Update package-lock.json
+          npm install
+
           # Create the release
           response=$(curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
             -H "Authorization: token $GITHUB_TOKEN" \
