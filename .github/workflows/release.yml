@@ -25,12 +25,14 @@ jobs:
         id: version
         run: |
           COMMIT_MESSAGE=$(git log -1 --pretty=format:%s)
-          if [[ $COMMIT_MESSAGE == "Patch:"* ]]; then
-            echo "::set-output name=version-bump::patch"
-          elif [[ $COMMIT_MESSAGE == "Minor:"* ]]; then
+          if [[ $COMMIT_MESSAGE == "feat:"* ]]; then
             echo "::set-output name=version-bump::minor"
-          elif [[ $COMMIT_MESSAGE == "Major:"* ]]; then
+          elif [[ $COMMIT_MESSAGE == "fix:"* ]]; then
+            echo "::set-output name=version-bump::patch"
+          elif [[ $COMMIT_MESSAGE == "rel:"* ]]; then
             echo "::set-output name=version-bump::major"
+          else
+            echo "::set-output name=version-bump::none"
           fi
         shell: bash
 
@@ -42,18 +44,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION_BUMP=$(echo ${{ steps.version.outputs.version-bump }})
-          if [ "$VERSION_BUMP" == "patch" ]; then
-            npm --no-git-tag-version version patch
-          elif [ "$VERSION_BUMP" == "minor" ]; then
+          if [ "$VERSION_BUMP" == "minor" ]; then
             npm --no-git-tag-version version minor
+          elif [ "$VERSION_BUMP" == "patch" ]; then
+            npm --no-git-tag-version version patch
           elif [ "$VERSION_BUMP" == "major" ]; then
             npm --no-git-tag-version version major
-          # If no major,minor or patch in commit message, then consider it to be patch
-          else
-            npm --no-git-tag-version version patch
           fi
 
-          # Use version from "package.json" as the default version if no tags were found
+          # Use "0.0.1" as the default version if no tags were found
           TAG=$(git describe --abbrev=0 --tags HEAD || echo "$(node -p "require('./package.json').version")")
 
           TITLE="Release $TAG"
@@ -87,9 +86,13 @@ jobs:
               \"prerelease\": $PRERELEASE
             }"
 
-          # Commit and push the updated package.json
+          # Copy the updated package.json to a release directory
+          mkdir release
+          cp package.json release/package.json
+
+          # Commit and push the updated package.json and release directory
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git commit -am "Bump version to $TAG"
-          git push
-
+          git add package.json release
+          git commit -m "Bump version to $TAG and include updated package.json in release"
+          git push --follow-tags
