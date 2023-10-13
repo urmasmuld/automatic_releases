@@ -80,8 +80,6 @@ jobs:
 
           # Extract the release ID from the API response
           RELEASE_ID=$(echo "$response" | jq -r '.id')
-          # Extract the release ID from the API response
-          RELEASE_ID=$(echo "$response" | jq -r '.id')
 
           # Mark the release as a prerelease
           # Check if $TAG starts with "0."
